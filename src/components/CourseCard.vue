@@ -8,12 +8,12 @@
 export default{
     name:"CourseCard",
     props:[
-        title,
+ /*     title,
         thumb,
         created_at,
         rating,
         fullname,
-        photo
+        photo*/
     ],
     data(){
         return{

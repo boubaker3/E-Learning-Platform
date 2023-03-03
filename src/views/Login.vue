@@ -1,6 +1,6 @@
 <template>
     
-  <div class=" shadow-xl rounded px-8 pt-6 pb-8 mb-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2  ">
+  <div class="bg-primary shadow-xl rounded px-8 pt-6 pb-8 mb-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2  ">
 
 <form>
   <h1 class="text-sm md:text-base lg:text-lg xl:text-xl font-bold text-texts">Login to ElEA</h1>

@@ -30,8 +30,8 @@
 
   <div v-if="!isLogged">
     <ul class="hidden items-center md:flex  ">
-        <li><button @click="showLogin" class="text-texts   hover:text-gray-800 px-4 py-2 bg-secondary ml-2 rounded ">Login</button></li>
-        <li><button @click="showSignup" class="text-texts hover:text-gray-800 px-4 py-2 bg-secondary ml-2 rounded ">Signup</button></li>
+        <li @click="showLogin"><button  class="text-texts   hover:text-gray-800 px-4 py-2 bg-secondary ml-2 rounded ">Login</button></li>
+        <li @click="showSignup"><button  class="text-texts hover:text-gray-800 px-4 py-2 bg-secondary ml-2 rounded ">Signup</button></li>
 
     </ul>
   </div>
@@ -79,7 +79,7 @@
   </div>
  
   <ul class="block ml-4 md:ml-6   "> 
-<li v-for="menuItem in menuItems"   >
+<li v-for="menuItem in menuItems">
 <router-link  class="flex " :to="menuItem.path.toLowerCase()">
 
 <span class="w-6 h-6 flex justify-center items-center ">
@@ -129,17 +129,22 @@ export default {
   }, 
   
   methods: {
-    navigate(name){
-       return '/'
-       
-    },
+    
     showLogin(){
       store.commit("setLogin")
+      console.log("ss")
+
     },
     showSignup(){
       store.commit("setSignup")
       
-    }
+    },
+    handleResize() {
+      this.windowSize = {
+        width: window.innerWidth,
+        height: window.innerHeight,
+      };
+    },
   
 } ,
   computed: {
@@ -164,16 +169,7 @@ watch: {
   },
   destroyed() {
     window.removeEventListener("resize", this.handleResize);
-  },
-  methods: {
-    handleResize() {
-      this.windowSize = {
-        width: window.innerWidth,
-        height: window.innerHeight,
-      };
-    },
-  },
- 
+  } 
 }
 </script>
 <style scoped>

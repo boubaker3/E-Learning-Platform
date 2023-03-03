@@ -1,7 +1,6 @@
 <template>
     <div class="home">
 <div id="suggestions"  class=" w-full md:flex">
- 
   <ul class=" flex h-24 ">
       <li v-for="menuItem in menuItems"><a href="#" class="text-texts  rounded-xl bg-inputs p-2 mt-12">{{ menuItem.name }}</a></li>
   </ul> 
