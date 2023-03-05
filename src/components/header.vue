@@ -47,7 +47,7 @@
 
       </div>
       </router-link>
-      <router-link to="/profile">
+      <router-link :to="{path:`/profile/${userid.userid}` }">
 
       <div class=" w-12 w-12 rounded   items-center flex justify-center p-2">
         <img class="w-full" src="../assets/user.png"/> 
@@ -101,6 +101,7 @@ export default {
   name: 'Header',
   data(){
     return{
+      userid:JSON.parse(localStorage.getItem("user")),
       user:{
         fullname:store.state.user.fullname,
         photo:store.state.user.fullname 
@@ -132,8 +133,7 @@ export default {
     
     showLogin(){
       store.commit("setLogin")
-      console.log("ss")
-
+ 
     },
     showSignup(){
       store.commit("setSignup")

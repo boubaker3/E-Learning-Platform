@@ -18,7 +18,7 @@ const store=createStore({
     },
     actions:{
        async signup ({ commit },  credentials) {
-            return await api.post('/signup', credentials ,{
+            return await api.post('signup', credentials ,{
                 headers:{
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin':"*"
@@ -33,21 +33,31 @@ const store=createStore({
               })
           },
           async login ({ commit },  credentials) {
-            return await api.post('/login', credentials ,{
+            return await api.post('login', credentials ,{
                 headers:{
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin':"*"
                 }
             })
               .then(response => {
-                
                 return Promise.resolve(response)
+                
               })
               .catch(error => {
                 return Promise.reject(error)
               })
+          },
+         async getUserdata({commit},userid){
+            return  await api.get(`userdata?userid=${userid}`).then(response=>{
+              return Promise.resolve(response)
+            }).catch(error=>{
+              return Promise.reject(error)
+            });
+      
           }
-    },
+    }
+    
+    ,
     mutations:{
         setToken(state, token  ) {
             state.token = token

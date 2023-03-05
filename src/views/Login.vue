@@ -2,7 +2,7 @@
     
   <div class="bg-primary shadow-xl rounded px-8 pt-6 pb-8 mb-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2  ">
 
-<form>
+<form @submit.prevent="login">
   <h1 class="text-sm md:text-base lg:text-lg xl:text-xl font-bold text-texts">Login to ElEA</h1>
   <p class="block mb-2 text-sm font-medium text-secondary-variant  ">{{errors}}</p>
 
@@ -42,12 +42,12 @@
     methods: {
        login() {
  if (this.email.length==0|| this.password.length==0 ){
-  this.errors="all the fields must be filled!"
 } else{
   store.dispatch('login',{
         email: this.email,
         password: this.password})
         .then(response=>{
+          console.log(response)
           const token = response.data.token
                 const user=response.data.user
                 localStorage.setItem("token",token)
