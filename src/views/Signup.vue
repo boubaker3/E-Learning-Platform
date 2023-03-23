@@ -52,7 +52,7 @@ import store from '../store'
        signup() {
 if(this.password!=this.confirmPassword){
   this.errors="the passwords are not the same!"
-}else if (this.fullname.length==0||this.email.length==0||this.password.length==0||this.confirmPassword.length==0){
+}else if (this.fullname.length<8||this.email.length==0||this.password.length==0||this.confirmPassword.length==0){
   this.errors="all the fields must be filled!"
 }else if(this.fullname.length<8||this.password.length<8){
   this.errors='fullname and password length must be >8'
@@ -61,6 +61,8 @@ if(this.password!=this.confirmPassword){
         email: this.email,
         password: this.password})
         .then(response=>{
+      store.commit("setSignup")
+
           const token = response.data.token
                 const user=response.data.user
                 localStorage.setItem("token",token)

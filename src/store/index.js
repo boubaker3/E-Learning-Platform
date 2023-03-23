@@ -1,8 +1,12 @@
 import { createStore } from 'vuex'
 import api from '../axios'
-
+import createPersistedState from 'vuex-persistedstate'
+import route from "../router";
  
 const store=createStore({
+  plugins: [
+    createPersistedState()
+  ],
     state:{ 
             user:{
                  
@@ -11,11 +15,9 @@ const store=createStore({
        
            isAuthenticated:false,
            showLogin:false,
-           showSignup:false
-    },
-    getters:{
-
-    },
+           showSignup:false,
+           userdata:{}
+    }, 
     actions:{
        async signup ({ commit },  credentials) {
             return await api.post('signup', credentials ,{
@@ -48,10 +50,13 @@ const store=createStore({
               })
           },
          async getUserdata({commit},userid){
-            return  await api.get(`userdata?userid=${userid}`).then(response=>{
-              return Promise.resolve(response)
+               await api.get(`userdata?userid=${userid}`).then(response=>{
+             commit("SET_USERDATA",response.data.userdata)
+    console.log(response.data.userdata)
+      
             }).catch(error=>{
-              return Promise.reject(error)
+              console.log(error);
+
             });
       
           }
@@ -65,6 +70,12 @@ const store=createStore({
         setUser(state,user){
             state.user=JSON.parse(user)
          },
+         SET_USERDATA(state, userdata) {
+          console.log( userdata)
+          state.userdata = userdata;
+          route.push(`/profile/${state.userdata.userid}`)
+
+      },
         authenticate(){
             this.state.isAuthenticated=true
         },

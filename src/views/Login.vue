@@ -48,6 +48,8 @@
         password: this.password})
         .then(response=>{
           console.log(response)
+      store.commit("setLogin")
+
           const token = response.data.token
                 const user=response.data.user
                 localStorage.setItem("token",token)

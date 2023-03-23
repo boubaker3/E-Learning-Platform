@@ -49,7 +49,7 @@ import store from './store';
   
 <style>
 #app{
-  overflow-x: hidden;
+  
 }
 h1{
   font-family: 'Montserrat', sans-serif;

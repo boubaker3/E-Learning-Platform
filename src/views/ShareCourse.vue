@@ -28,6 +28,20 @@
                                                                  focus:ring-blue-500 focus:border-blue-500 block w-full md:w-1/4  p-2.5"
      placeholder="describe the course" ></textarea>
   </div>
+
+  <div class="mb-6">
+    <div v-for="benefit in benefits" class="bg-inputs w-1/4 p-2 rounded-md mt-4">
+    <p class="text-texts font-bold">{{ benefit}}</p>
+    </div>
+    <br/>
+    <label for="benefit" class="block mb-2 text-sm font-medium text-gray-900  text-texts">What you're gonna learn:</label>
+    <input  v-model="benefit" type="text" id="benefit" class="shadow-sm bg-inputs text-texts text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full md:w-1/4  p-2.5  " placeholder="what it takes to start this course?"  >
+    <br/>
+    <button :disabled="benefits.length>20" @click="addBenefit"
+         class="text-texts hover:text-gray-800 px-4 py-2 bg-inputs ml-2 font-bold rounded ">add benefit</button>
+  
+</div>
+
   <div class="mb-6">
     <div v-for="req in requirements" class="bg-primary-variant w-1/4 p-2 rounded-md mt-4">
     <p class="text-texts font-bold">{{ req}}</p>
@@ -93,11 +107,14 @@ import store from "../store"
 name:"ShareCourse",
 data(){
     return{
+      user:store.state.user,
         title:"",
         courseThumb:null,
         description:"",
         requirement:"",
         requirements:[],
+        benefit:"",
+        benefits:[],
         categories:[
           {id:1,name:"Development"},
           {id:2,name:"Business"},
@@ -119,7 +136,11 @@ data(){
        errors:""
 
 
+
     }  
+},
+mounted(){
+console.log(this.user.userid)
 },
 methods:{
     onFileSelected(e){
@@ -134,15 +155,22 @@ methods:{
           this.requirement=""
  
         }
-
         },
+        addBenefit(){
+        if(this.benefit!=""&&this.benefit.length>10){
+
+          this.benefits.push(this.benefit)
+          this.benefit=""
+ 
+        }},   
     addVideo(e){
         const file=e.target.files[0]
         this.videos.push(file)
         this.videonames.push(file.name)
     },
    async share(){
-    if(this.title==""||this.courseThumb==null||this.description==""||this.requirements.length==0||this.videos.length==0){
+    if(this.title==""||this.courseThumb==null||this.description==""||
+    this.requirements.length==0||this.benefits.length==0||this.videos.length==0){
         this.errors="All fields are required"
     
     }
@@ -152,7 +180,7 @@ methods:{
           formData.append('videos[]', this.videos[i])
       } 
       
-      formData.append('userid',"123456789") 
+      formData.append('userid',this.user.userid) 
  
       formData.append('title',this.title) 
       formData.append('thumb',this.thumb) 
@@ -161,6 +189,7 @@ methods:{
       formData.append('requirements',JSON.stringify(this.requirements))
       formData.append('paid_or_free',this.paid_or_free)
       formData.append('price',this.price)
+      formData.append('benefits',JSON.stringify(this.benefits))
  
         await api.post("/sharecourse",formData)
                 .then(res=>{

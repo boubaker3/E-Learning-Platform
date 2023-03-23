@@ -18,16 +18,16 @@
 
 </div>
 
-<div class="flex items-center w-full md:w-1/2 bg-inputs  rounded-xl h-12 md:h-12 p-4 m-2">
-      <button   aria-label="Toggle menu">
+<div class="flex items-center w-full md:w-1/2 bg-inputs  rounded-xl h-12 md:h-14 p-4 m-2">
+<router-link :to="{path:`/searchFor/${searchFor}`}">
+<button aria-label="Toggle menu">
     <svg aria-hidden="true" class="w-5 h-5  " fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-
-  </button>
-    <input class="w-full h-full bg-transparent outline-0 m-4 text-texts" placeholder="Search For courses..."  />
-
+</button>
+</router-link>
+<input v-model="searchFor"
+class="w-full h-full bg-transparent outline-0 m-4 text-texts" placeholder="Search For courses..."  />
 </div>
-
-
+ 
   <div v-if="!isLogged">
     <ul class="hidden items-center md:flex  ">
         <li @click="showLogin"><button  class="text-texts   hover:text-gray-800 px-4 py-2 bg-secondary ml-2 rounded ">Login</button></li>
@@ -36,9 +36,10 @@
     </ul>
   </div>
   <div v-if="isLogged" class="hidden items-center md:flex  ">
-    <router-link to="/signup">
+    <router-link to="/yourcart">
     <div class=" w-12 w-12 rounded items-center flex justify-center p-2">
         <img class="w-full" src="../assets/shopping.png"/> 
+        <p class="text-texts bg-primary-variant m-1 px-2 rounded font-bold  ">{{ addedCourses }}</p>
       </div> 
     </router-link>
     <router-link to="/sharecourse">
@@ -47,26 +48,15 @@
 
       </div>
       </router-link>
-      <router-link :to="{path:`/profile/${userid.userid}` }">
 
-      <div class=" w-12 w-12 rounded   items-center flex justify-center p-2">
-        <img class="w-full" src="../assets/user.png"/> 
+      <div  @click="toProfile" class=" w-12 w-12 rounded   items-center flex justify-center p-2">
+        <img class="w-full rounded-md" :src="photoPath"/> 
 
       </div>
-    </router-link>
-      <router-link to="/login">
-       <a   class="text-texts hover:text-gray-800   font-bold  rounded ">Welcome {{user.fullname}},</a> 
-      </router-link>
-    
-
-     
-  </div>
-
-
-</header>
-
-
-
+      
+       <a   class="text-texts hover:text-gray-800   font-bold  rounded ">Welcome {{user.fullname}},</a>  
+  </div> 
+</header> 
     <div id="menu" :style="{ left:showMenu?0:'-960px',zIndex:100 }"  class="z-100 items-center fixed  top-0  
  bg-primary h-full w-full md:w-auto   ">
  <div class=" flex  items-center m-6 w-full ">
@@ -79,9 +69,18 @@
   </div>
  
   <ul class="block ml-4 md:ml-6   "> 
-<li v-for="menuItem in menuItems">
-<router-link  class="flex " :to="menuItem.path.toLowerCase()">
+<li v-for="menuItem in menuItems" @click="menuItem.name=='Profile'&&toProfile">
+<div class="flex mb-6" v-show="menuItem.id==7" @click="toProfile">
 
+<span class="w-6 h-6 flex justify-center items-center ">
+  <i class="fas fa-user text-texts "  ></i>
+</span>
+<a href="#" class="text-texts px-4 font-bold">Profile</a> 
+
+</div>  
+
+<router-link  class="flex "
+ :to="menuItem.name!='Profile'&&menuItem.path.toLowerCase()"> 
 <span class="w-6 h-6 flex justify-center items-center ">
   <i :class="menuItem.iconClass+ ' text-texts '"  ></i>
 </span>
@@ -96,7 +95,9 @@
 
 <script >
 import store from '../store';
-import route from '../router';
+import api from '../axios';
+import localhost from '../../localhost';
+import userLogo from "../assets/user.png";
 export default {
   name: 'Header',
   data(){
@@ -104,31 +105,45 @@ export default {
       userid:JSON.parse(localStorage.getItem("user")),
       user:{
         fullname:store.state.user.fullname,
-        photo:store.state.user.fullname 
+        photo:store.state.user.photo 
       },
       isLogged:store.state.isAuthenticated,
       showMenu:true,
       menuItems:[
       { id: 1, name: "Home", iconClass: "fas  fa-home" ,path:"/"},
         { id: 2, name: "Notifications", iconClass: "fas fa-bell" ,path:"/Notifications" },
-        { id: 2, name: "Your Cart", iconClass: "fas fa-shopping-cart  "  ,path:"/YourCart"},
-        { id: 2, name: "Subscriptions", iconClass: "fas fa-users" ,path:"/Subscriptions" },
-        { id: 3, name: "Most Popular", iconClass: "fas fa-fire"  ,path:"/MostPopular"},
-        { id: 4, name: "Saves", iconClass: "fas fa-bookmark"  ,path:"/Saves"},
-        { id: 5, name: "Library", iconClass: "fas fa-book"  ,path:"/Library"},
-        { id: 6, name: "Your Courses", iconClass: "fas fa-graduation-cap" ,path:"/YourCourses" },
+        { id: 3, name: "Your Cart", iconClass: "fas fa-shopping-cart  "  ,path:"/YourCart"},
+        { id: 4, name: "Your Courses", iconClass: "fas fa-graduation-cap "  ,path:"/YourCourses"},
+        { id: 5, name: "Subscriptions", iconClass: "fas fa-users" ,path:"/Subscriptions" },
+        { id: 6, name: "Saves", iconClass: "fas fa-bookmark"  ,path:"/Saves"},
         { id: 7, name: "Watched", iconClass: "fas fa-clock" ,path:"/Watched" } ,
-        { id: 7, name: "Profile", iconClass: "fas fa-user"  ,path:"/Profile"} ,
-        { id: 7, name: "Logout", iconClass: "fas fa-sign-out-alt"  ,path:"/Logout"} ,
       ],
       windowSize: {
         width: window.innerWidth,
         height: window.innerHeight,
       },
+      addedCourses:0,
+      searchFor:""
 
     }
   }, 
-  
+  mounted(){
+    if(this.isLogged){
+      this.menuItems.push(
+        { id: 9, name: "Logout", iconClass: "fas fa-sign-out-alt"  ,path:"/Logout"} 
+      )
+      api.get(`addedCartCourses?userid=${this.userid.userid}`)
+        .then(response=>{
+        this.addedCourses=response.data.cartCourses.length
+        console.log(this.addedCourses)        
+        })
+        .catch(error=>{
+            console.log(error)
+        })
+    }
+ 
+         
+  },
   methods: {
     
     showLogin(){
@@ -145,9 +160,16 @@ export default {
         height: window.innerHeight,
       };
     },
-  
+    toProfile(){
+      store.dispatch("getUserdata", this.userid.userid)
+
+    }
+    
 } ,
   computed: {
+    photoPath(){
+      return this.user.photo!=null? localhost+"photos\\"+this.user.photo:userLogo
+    },
     displayValue() {
       if (this.windowSize.width >=960) {
         this.showMenu=true
@@ -165,6 +187,7 @@ watch: {
  
 } ,
   created() {
+   
     window.addEventListener("resize", this.handleResize);
   },
   destroyed() {

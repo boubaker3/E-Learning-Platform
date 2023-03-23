@@ -1,71 +1,83 @@
 <template>
-    <div class="home">
-<div id="suggestions"  class=" w-full md:flex">
-  <ul class=" flex h-24 ">
-      <li v-for="menuItem in menuItems"><a href="#" class="text-texts  rounded-xl bg-inputs p-2 mt-12">{{ menuItem.name }}</a></li>
-  </ul> 
-    </div>
-    <div class="md:flex">
-<CourseCard />
-    </div>
-    </div>
-  </template>
+  <div class="flex flex-wrap">
+    <course-card v-for="course in courses" :courseid="course.courseid" :userid="course.userid"
+                                       :title="course.title" :thumb="course.thumb" :category="course.category"
+                                       :rating="course.rating" :fullname="course.fullname" 
+                                       :photo="course.photo" :price="course.price"/>
+  </div>
+  <div class="w-full flex items-center justify-center  ">
+  <button  @click="decrementPage" v-if="currentPage > 1" class="h-10 text-texts hover:text-gray-800 px-4 py-2 bg-secondary ml-2 rounded ">prev</button> 
+ 
+  <button  @click="incrementPage" v-if="currentPage > Math.ceil(totalCourses / perPage)" class="h-10 text-texts hover:text-gray-800 px-4 py-2 bg-secondary ml-2 rounded ">next</button> 
   
-  <script>
-import CourseCard from '../components/CourseCard.vue';
-import api from '../axios';
-  export default {
-    name: "Home",
-    data(){
-      return{
-        courses:[],
-        menuItems:[
-          {id:1,name:"Development"},
-          {id:2,name:"Business"},
-          {id:3,name:"Finance&Accounting"},
-          {id:4,name:"It&Software"},
-          {id:5,name:"Design"},
-          {id:6,name:"Marketing"},
-          {id:7,name:"Health&Fitness"},
-          {id:8,name:"Music"},
-          {id:9,name:"FilmMaking"},
-          {id:10,name:"Photography"},
-      ]
-      } 
-    },
-    components:{
-CourseCard
-    },
-    mounted() {
-    // Execute GET method here
-    api.get('/recommendedCourses')
-      .then(response => {
-        this.courses = response.data.courses;
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  },
-    methods:{
+  </div>
 
+
+</template>
+
+<script>
+import api from "../axios";
+import CourseCard from "../components/CourseCard.vue";
+import route from "../router";
+export default {
+  name:"home",
+  components:{
+    CourseCard
+  },
+  data() {
+    return {
+    courses:[],
+    currentPage:1,
+    perPage:10,
+    totalCourses:0
     }
-}
-  </script>
-  
-  <style scoped>
-  #suggestions{
-    width: 100%;
-    white-space: nowrap;
-    overflow: auto;
-     }
-  #suggestions::-webkit-scrollbar {
-  display: none;
-}
-  #suggestions li{
-    border-radius: 12px;
-  
-    margin-left: 5px;
-    margin: 12px;
+  },
+  mounted(){
+    this.fetchData()  
+  },
+  methods:{
+    fetchData(){
+      const user=JSON.parse(localStorage.getItem("user"))
+    console.log(user)
+    if(user){
+
+    api.get(`recommendedCourses?userid=${user.userid}&page=${this.$route.params.page}` )
+        .then(response=>{
+        this.courses=response.data.recommendedCourses
+        this.totalCourses=response.data.totalCourses
+        console.log(response.data.recommendedCourses)
+                }).catch(error=>{
+            console.log(error)
+        });
+    } else{
+     const userid=null
+    api.get(`mostPopularCourses?userid=${userid}&page=${this.$route.params.page}` )
+        .then(response=>{
+        this.courses=response.data.recommendedCourses
+        console.log(response.data.recommendedCourses)
+                }).catch(error=>{
+            console.log(error)
+        });
+    }
+    },
+    incrementPage(){
+      this.currentPage+=1
+      route.push(`/home/${this.currentPage}`)
+    },
+    decrementPage(){
+      this.currentPage-=1
+      route.push(`/home/${this.currentPage}`)
+    }
+  },
+  watch:{
+    '$route' (from,to){
+      this.fetchData()
+    }
   }
-  </style>
-  
+   
+};
+</script>
+
+<style>
+ 
+</style>
