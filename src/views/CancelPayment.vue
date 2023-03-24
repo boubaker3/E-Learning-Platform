@@ -1,23 +1,16 @@
 <template>
-    <div class="flex">
-        <h1 class= "text-lg text-texts font-bold">Payment is Canceled</h1>
+  <div class="flex">
+    <h1 class="text-lg text-texts font-bold">Payment is Canceled</h1>
+  </div>
+</template>
 
-    
-        </div>
-  </template>
-  
-  <script>
-  export default {
-    name:"cancelPayment", 
-    data() {
-      return {
-      }
-    } 
-     
-  };
-  </script>
-  
-  <style>
-   
-  </style>
-  
+<script>
+export default {
+  name: "cancelPayment",
+  data() {
+    return {};
+  },
+};
+</script>
+
+<style></style>
